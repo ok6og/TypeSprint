@@ -1,0 +1,6 @@
+@TypeSprint.Server_HostAddress = http://localhost:5082
+
+GET {{TypeSprint.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

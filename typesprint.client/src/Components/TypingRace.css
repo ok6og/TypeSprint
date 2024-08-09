@@ -1,0 +1,51 @@
+body {
+}
+.typeracer-container {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.typeracer-heading {
+    margin-bottom: 16px;
+    font-family: monospace;
+    text-align: left;
+}
+
+.typeracer-text {
+    font-family: monospace;
+    text-align: left;
+}
+
+.typeracer-highlight {
+    color: black;
+}
+
+.typeracer-input {
+    width: 100%;
+    border: 1px solid black;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    box-sizing: border-box; /* Ensures padding doesn't affect the width */
+}
+
+
+/* Green text for already typed words */
+.green-typed {
+    color: #16a34a;
+}
+
+/* Black text with underline for the current word */
+.current-word {
+    color: black;
+    text-decoration: underline;
+}
+
+/* Black text for words yet to be typed */
+.to-be-typed {
+    color: black;
+}
+.red-text{
+    color:red;
+}
