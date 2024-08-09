@@ -76,8 +76,18 @@ namespace TypeSprint.Server.Controllers
         // POST: api/GameResults
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<GameResult>> PostGameResult(GameResult gameResult)
+        public async Task<ActionResult<GameResult>> PostGameResult([FromBody]GameResultAddDto gameResultDto)
         {
+
+            var gameResult = new GameResult
+            {
+                WordsPerMinute = gameResultDto.WordsPerMinute,
+                Accuracy = gameResultDto.Accuracy,
+                DatePlayed = gameResultDto.DatePlayed,
+                QuoteId = gameResultDto.QuoteId,
+                UserId = gameResultDto.UserId
+            };
+
             _context.GameResults.Add(gameResult);
             await _context.SaveChangesAsync();
 
