@@ -12,8 +12,7 @@ function TypingRace() {
     const [quote, setQuote] = useState<Quote>();
     const [text, setText] = useState<string>("");
 
-    //new
-    const [allTypedWords, setAllTypedWords] = useState<string>(""); // New state to track all typed words
+    const [allTypedWords, setAllTypedWords] = useState<string>(""); 
 
     const [currentWord, setCurrentWord] = useState<string>();
     const quotesSplit = useMemo(() => quote?.quote.split(" ") ?? [], [quote]);
@@ -27,6 +26,7 @@ function TypingRace() {
     const [countdown, setCountdown] = useState<number>(5); // New state for countdown
 
     const [isCountdownActive, setIsCountdownActive] = useState<boolean>(false); // Track if countdown is active
+
 
     const alreadyTypedWords = useMemo(
         () => quotesSplit.slice(0, wordIdx).join(" "),
@@ -138,13 +138,9 @@ function TypingRace() {
     const calculateWPM = () => {
         if (startTime === 0) return 0;
 
-
-
-
         const elapsedSeconds = (Date.now() - startTime) / 1000;
 
-        if (elapsedSeconds <= 0) return 0;
-        console.log(`Elapsed Seconds: ${elapsedSeconds}`); // Debug log
+         if (elapsedSeconds <= 0 || allTypedWords.length === 0) return 0;
 
         const wordsTyped = allTypedWords.trim().split(/\s+/).length;
 
@@ -154,12 +150,9 @@ function TypingRace() {
    
 
     const nextQuote = () => {
-
         setQuote(undefined);  // Temporarily clear the quote while resetting
         setCountdown(5); // Reset countdown
-
         setIsCountdownActive(true); // Activate countdown
-
         setGameState(GameState.WAITING); // Set game state to WAITING until countdown finishes
     };
 
