@@ -1,7 +1,7 @@
 // TypingRace.tsx
 import './TypingRace.css';
 import { useEffect, useMemo, useState } from "react";
-import { Quote, randomQuote } from "./repository"
+import { Quote, randomQuote } from "./repository";
 import StatsDisplay from "./StatsDisplay";
 import { GameState } from "./gameState";
 
@@ -11,14 +11,22 @@ const inputId = "typeracer-input";
 function TypingRace() {
     const [quote, setQuote] = useState<Quote>();
     const [text, setText] = useState<string>("");
+
+    //new
+    const [allTypedWords, setAllTypedWords] = useState<string>(""); // New state to track all typed words
+
     const [currentWord, setCurrentWord] = useState<string>();
     const quotesSplit = useMemo(() => quote?.quote.split(" ") ?? [], [quote]);
     const [wordIdx, setWordIdx] = useState<number>(0);
 
-    const [startTime, setStartTime] = useState<number>(0)
-    const [endTime, setEndTime] = useState<number>(0)
+    const [startTime, setStartTime] = useState<number>(0);
+    const [endTime, setEndTime] = useState<number>(0);
 
     const [gameState, setGameState] = useState(GameState.WAITING);
+
+    const [countdown, setCountdown] = useState<number>(5); // New state for countdown
+
+    const [isCountdownActive, setIsCountdownActive] = useState<boolean>(false); // Track if countdown is active
 
     const alreadyTypedWords = useMemo(
         () => quotesSplit.slice(0, wordIdx).join(" "),
@@ -33,7 +41,7 @@ function TypingRace() {
         if (currentWord) {
             let i = 0;
             while (i < text.length) {
-                if (text[i] != currentWord[i]) {
+                if (text[i] !== currentWord[i]) {
                     break;
                 }
                 i++;
@@ -47,10 +55,7 @@ function TypingRace() {
 
     const wrongRedWord = useMemo(
         () =>
-            currentWord?.slice(
-                correctGreenWord.length,
-                text.length
-            ),
+            currentWord?.slice(correctGreenWord.length,text.length),
         [correctGreenWord, currentWord, text]
     );
 
@@ -60,49 +65,102 @@ function TypingRace() {
     }, []);
 
     useEffect(() => {
-        setWordIdx(0)
-        setText('')
-    }, [quotesSplit])
+        setWordIdx(0);
+        setText('');
+        setAllTypedWords(''); // Reset allTypedWords
+    }, [quotesSplit]);
 
     useEffect(() => {
-        setCurrentWord(quotesSplit[wordIdx])
-    }, [wordIdx, quotesSplit])
+        setCurrentWord(quotesSplit[wordIdx]);
+    }, [wordIdx, quotesSplit]);
 
     useEffect(() => {
-        const latestLetter = text?.charAt(text.length - 1)
-        if (latestLetter != ' ' && wordIdx != quotesSplit.length - 1) return
+        const latestLetter = text?.charAt(text.length - 1);
+        if (latestLetter !== ' ' && wordIdx !== quotesSplit.length - 1) return;
         const textWithoutTrailingSpace = text?.replace(/\s*$/, "");
-        if (textWithoutTrailingSpace == currentWord) {
-            setText('')
-            setWordIdx(() => wordIdx + 1)
+        if (textWithoutTrailingSpace === currentWord) {
+            setAllTypedWords(prev => prev + ' ' + textWithoutTrailingSpace); // Append typed word
+            setText('');
+            setWordIdx(() => wordIdx + 1);
         }
-    }, [text, currentWord, wordIdx, quotesSplit])
+    }, [text, currentWord, wordIdx, quotesSplit]);
 
     useEffect(() => {
         setGameState(GameState.PLAYING);
     }, []);
 
     useEffect(() => {
-        if (gameState == GameState.PLAYING) {
+        if (gameState === GameState.PLAYING) {
             document.getElementById(inputId)?.focus();
             setQuote(randomQuote());
             setStartTime(Date.now());
         }
-        if (gameState == GameState.VIEW_STATS) {
+        if (gameState === GameState.VIEW_STATS) {
             setEndTime(Date.now());
         }
     }, [gameState]);
 
     useEffect(() => {
         const quoteFinished =
-            quotesSplit.length == wordIdx && quotesSplit.length != 0;
+            quotesSplit.length === wordIdx && quotesSplit.length !== 0;
         if (quoteFinished) {
             setGameState(GameState.VIEW_STATS);
         }
     }, [wordIdx, quotesSplit]);
 
+    // Countdown effect
+
+    useEffect(() => {
+
+        let timer: NodeJS.Timeout;
+
+        if (isCountdownActive) {
+
+            if (countdown > 0) {
+
+                timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+
+            } else {
+
+                setGameState(GameState.PLAYING);
+                setText(''); // Clear text for the new quote
+
+                setIsCountdownActive(false); // Stop countdown
+                document.getElementById(inputId)?.focus(); // Focus input after countdown
+            }
+
+        }
+
+        return () => clearTimeout(timer); // Cleanup
+
+    }, [countdown, isCountdownActive]);
+
+    const calculateWPM = () => {
+        if (startTime === 0) return 0;
+
+
+
+
+        const elapsedSeconds = (Date.now() - startTime) / 1000;
+
+        if (elapsedSeconds <= 0) return 0;
+        console.log(`Elapsed Seconds: ${elapsedSeconds}`); // Debug log
+
+        const wordsTyped = allTypedWords.trim().split(/\s+/).length;
+
+        const wps = wordsTyped / elapsedSeconds;
+        return Math.floor(wps * 60);
+    };
+   
+
     const nextQuote = () => {
-        setGameState(GameState.PLAYING);
+
+        setQuote(undefined);  // Temporarily clear the quote while resetting
+        setCountdown(5); // Reset countdown
+
+        setIsCountdownActive(true); // Activate countdown
+
+        setGameState(GameState.WAITING); // Set game state to WAITING until countdown finishes
     };
 
     return (
@@ -114,8 +172,14 @@ function TypingRace() {
                 <span className="current-word">{currentWord?.slice(text.length)}</span>
                 <span className="to-be-typed"> {wordsToBeTyped}</span>
             </p>
-            <input className="typeracer-input" onChange={(text) => setText(text.target.value)} value={text} disabled={gameState == GameState.VIEW_STATS} id={inputId} />
-            {quote && gameState == GameState.VIEW_STATS &&(
+            <input
+                className="typeracer-input"
+                onChange={(text) => setText(text.target.value)}
+                value={text}
+                disabled={isCountdownActive || gameState === GameState.VIEW_STATS}
+                id={inputId}
+            />
+            {quote && gameState === GameState.VIEW_STATS &&(
                 <StatsDisplay
                     startTime={startTime}
                     endTime={endTime}
@@ -123,6 +187,11 @@ function TypingRace() {
                     numOfWords={quotesSplit.length}
                     onClickNextQuote={nextQuote}
                 />
+            )}
+            {isCountdownActive && <p>Get ready! Starting in {countdown}...</p>}
+
+            {gameState === GameState.PLAYING && (
+                <p>Words per minute: {calculateWPM()}</p>
             )}
         </div>
     );
