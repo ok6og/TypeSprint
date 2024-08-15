@@ -73,6 +73,7 @@ function TypingRace() {
         setWordIdx(0);
         setText('');
         setAllTypedWords('');
+        setTotalKeystrokes(0);
     }, [quotesSplit]);
 
     useEffect(() => {
@@ -163,19 +164,6 @@ function TypingRace() {
         await saveGameResult(gameResult);
     };
 
-    const calculateAccuracy = () => {
-        if (allTypedWords.trim() === '') return 0;
-
-        const typedWords = allTypedWords.trim().split(/\s+/);
-        const correctWords = quotesSplit.slice(0, wordIdx + 1); // Words that should have been typed
-
-        const correctCount = typedWords.filter(word => correctWords.includes(word)).length;
-        const totalWords = correctWords.length;
-
-        return totalWords === 0 ? 100 : Math.floor((correctCount / totalWords) * 100);
-    };
-
-
     const nextQuote = async () => {
         setQuote(undefined);
         setCountdown(5);
@@ -196,6 +184,21 @@ function TypingRace() {
         }
     }, [gameState]);
 
+    const [totalKeystrokes, setTotalKeystrokes] = useState<number>(0);
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setText(event.target.value);
+        setTotalKeystrokes(prev => prev + 1);
+    };
+
+    const calculateAccuracy = () => {
+        if (quote && totalKeystrokes > 0) {
+            const quoteLength = quote.quoteText.length;
+            return Math.max(0, Math.min(100, (quoteLength / totalKeystrokes) * 100));
+        }
+        return 0;
+    };
+
     return (
         <div className="typeracer-container">
             <div className="headingLol">
@@ -211,7 +214,7 @@ function TypingRace() {
             </p>
             <input
                 className="typeracer-input"
-                onChange={(text) => setText(text.target.value)}
+                onChange={handleChange}
                 value={text}
                 disabled={isCountdownActive || gameState === GameState.VIEW_STATS}
                 id={inputId}

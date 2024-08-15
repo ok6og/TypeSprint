@@ -21,6 +21,12 @@ function Leaderboard() {
         }
 
         loadLeaderboard();
+
+        //const intervalId = setInterval(() => {
+        //    loadLeaderboard();
+        //}, 1000);
+
+        //return () => clearInterval(intervalId);
     }, []);
 
     if (loading) {
@@ -51,7 +57,7 @@ function Leaderboard() {
                             <td>{index + 1}</td>
                             <td>{result.userId}</td>
                             <td>{result.wordsPerMinute}</td>
-                            <td>TODO%</td>
+                            <td>{result.accuracy}</td>
                             <td>{new Date(result.datePlayed).toLocaleDateString()}</td>
                             <td>"{result.quote.quoteText}"</td>
                         </tr>

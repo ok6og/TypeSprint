@@ -10,10 +10,6 @@ namespace TypeSprint.Server.Models.DTOs
         public int WordsPerMinute { get; set; }
         public double Accuracy { get; set; }
         public DateTime DatePlayed { get; set; }
-
-        // Foreign Key to Quote
         public int QuoteId { get; set; }
-
-        // Navigation property
     }
 }

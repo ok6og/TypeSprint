@@ -48,26 +48,28 @@ function AddSourceTypeComponent() {
     };
 
     return (
-        <div className="form-container">
-            <h1>Add Source Type</h1>
-            <form onSubmit={handleSubmit}>
-                <div className="labels">
-                    <div>
-                        <label>
-                            Type Name:
-                            <input
-                                type="text"
-                                value={typeName}
-                                onChange={(e) => setTypeName(e.target.value)}
-                            />
-                        </label>
+        <div className ="container">
+            <div className="form-container">
+                <h1>Add Source Type</h1>
+                <form onSubmit={handleSubmit}>
+                    <div className="labels">
+                        <div>
+                            <label>
+                                Type Name:
+                                <input
+                                    type="text"
+                                    value={typeName}
+                                    onChange={(e) => setTypeName(e.target.value)}
+                                />
+                            </label>
+                        </div>
                     </div>
-                </div>
-                <button type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? 'Submitting...' : 'Submit'}
-                </button>
-                {error && <p className="error">{error}</p>}
-            </form>
+                    <button type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? 'Submitting...' : 'Submit'}
+                    </button>
+                    {error && <p className="error">{error}</p>}
+                </form>
+            </div>
         </div>
     );
 }

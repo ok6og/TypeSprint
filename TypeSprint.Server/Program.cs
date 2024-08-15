@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using System.Security.Claims;
 using TypeSprint.Server.Data;
+using TypeSprint.Server.Repository.Interfaces;
+using TypeSprint.Server.Repository;
 
 namespace TypeSprint.Server
 {
@@ -22,6 +24,9 @@ namespace TypeSprint.Server
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             // Add services to the container.
+
+            builder.Services.AddScoped<IGameResultRepository, GameResultRepository>();
+            builder.Services.AddHttpContextAccessor();
 
             builder.Services.AddControllers();
 

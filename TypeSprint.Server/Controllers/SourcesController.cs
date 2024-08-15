@@ -22,13 +22,6 @@ namespace TypeSprint.Server.Controllers
             _context = context;
         }
 
-        // GET: api/Sources
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<Source>>> GetSources()
-        //{
-        //    return await _context.Sources.ToListAsync();
-        //}
-
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SourceDto>>> GetSources([FromQuery] int? sourceTypeId)
         {
@@ -71,7 +64,6 @@ namespace TypeSprint.Server.Controllers
         }
 
         // PUT: api/Sources/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSource(int id, Source source)
         {
@@ -102,7 +94,6 @@ namespace TypeSprint.Server.Controllers
         }
 
         // POST: api/Sources
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<SourceDto>> PostSource([FromBody] SourceCreateDto sourceCreateDto)
         {
@@ -171,6 +162,5 @@ namespace TypeSprint.Server.Controllers
         {
             return _context.Sources.Any(e => e.SourceId == id);
         }
-
     }
 }

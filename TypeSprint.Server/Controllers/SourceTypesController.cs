@@ -35,9 +35,6 @@ namespace TypeSprint.Server.Controllers
             .ToListAsync();
 
             return Ok(sourceTypes);
-
-            //var nz =  await _context.SourceTypes.ToListAsync();
-            //return nz;
         }
 
         // GET: api/SourceTypes/5
@@ -55,7 +52,6 @@ namespace TypeSprint.Server.Controllers
         }
 
         // PUT: api/SourceTypes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSourceType(int id, SourceType sourceType)
         {
@@ -86,7 +82,6 @@ namespace TypeSprint.Server.Controllers
         }
 
         // POST: api/SourceTypes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<SourceType>> PostSourceType(SourceTypeCreateDto sourceTypeCreateDto)
         {

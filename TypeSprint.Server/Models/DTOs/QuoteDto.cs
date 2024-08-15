@@ -6,8 +6,6 @@
         public string QuoteText { get; set; }
         public int? SourceId { get; set; }
         public SourceDto Source { get; set; }
-
-        // Optional: Track how many times a quote has been used
         public int TimesUsed { get; set; }
     }
 }
