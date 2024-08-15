@@ -24,6 +24,18 @@ namespace TypeSprint.Server
             // Add services to the container.
 
             builder.Services.AddControllers();
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin",
+                    policy =>
+                    {
+                        policy.WithOrigins("https://localhost:5173")
+                              .AllowAnyHeader()
+                              .AllowAnyMethod()
+                              .AllowCredentials();
+                    });
+            });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -48,20 +60,33 @@ namespace TypeSprint.Server
 
             }).RequireAuthorization();
 
-                
-                
+            // Inside your Program.cs or a separate Controller file
+            app.MapGet("/api/user/currentId", async (HttpContext httpContext) =>
+            {
+                if (httpContext.User.Identity?.IsAuthenticated == true)
+                {
+                    var userId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    return Results.Json(new { UserId = userId });
+                }
+                return Results.Unauthorized();
+            }).RequireAuthorization();
+
+
+
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                app.UseDeveloperExceptionPage();
             }
 
             app.UseHttpsRedirection();
-
+            app.UseCors("AllowSpecificOrigin");
             app.UseAuthorization();
-
+            
 
             app.MapControllers();
 

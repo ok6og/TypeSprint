@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Quote, randomQuote } from "./repository";
 import StatsDisplay from "./StatsDisplay";
 import { GameState } from "./gameState";
+import { fetchCurrentUserId, saveGameResult } from './apiService'; // Import your API functions
 
 const inputId = "typeracer-input";
 
@@ -12,10 +13,10 @@ function TypingRace() {
     const [quote, setQuote] = useState<Quote>();
     const [text, setText] = useState<string>("");
 
-    const [allTypedWords, setAllTypedWords] = useState<string>(""); // New state to track all typed words
+    const [allTypedWords, setAllTypedWords] = useState<string>("");
 
     const [currentWord, setCurrentWord] = useState<string>();
-    const quotesSplit = useMemo(() => quote?.quote.split(" ") ?? [], [quote]);
+    const quotesSplit = useMemo(() => quote?.quoteText.split(" ") ?? [], [quote]);
     const [wordIdx, setWordIdx] = useState<number>(0);
 
     const [startTime, setStartTime] = useState<number>(0);
@@ -23,11 +24,39 @@ function TypingRace() {
 
     const [gameState, setGameState] = useState(GameState.WAITING);
 
-    const [countdown, setCountdown] = useState<number>(5); // New state for countdown
+    const [countdown, setCountdown] = useState<number>(5);
 
-    const [isCountdownActive, setIsCountdownActive] = useState<boolean>(false); // Track if countdown is active
+    const [isCountdownActive, setIsCountdownActive] = useState<boolean>(true);
 
     const [elapsedTime, setElapsedTime] = useState<number>(0);
+
+    const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+    useEffect(() => {
+        const getUserId = async () => {
+            const userId = await fetchCurrentUserId();
+            setCurrentUserId(userId);
+        };
+        getUserId();
+        fetchRandomQuote();
+    }, []);
+
+    // Fetch a random quote from the server
+    const fetchRandomQuote = async () => {
+        try {
+            const data = await randomQuote();  // fetch random quote from backend
+            setQuote(data);  // Set the fetched quote
+        } catch (error) {
+            console.error("Error fetching quote:", error);
+        }
+    };
+
+    //useEffect(() => {
+    //    // Trigger countdown on first page load
+    //    setIsCountdownActive(true);
+    //    fetchRandomQuote();
+    //}, []);  // This effect runs once when the component mounts
+
 
 
     const alreadyTypedWords = useMemo(
@@ -56,15 +85,10 @@ function TypingRace() {
     
 
     const wrongRedWord = useMemo(
-        () =>
-            currentWord?.slice(correctGreenWord.length, text.length),
+        () => currentWord?.slice(correctGreenWord.length, text.length),
         [correctGreenWord, currentWord, text]
     );
 
-
-    useEffect(() => {
-        setQuote(randomQuote());
-    }, []);
 
     useEffect(() => {
         setWordIdx(0);
@@ -81,36 +105,29 @@ function TypingRace() {
         if (latestLetter !== ' ' && wordIdx !== quotesSplit.length - 1) return;
         const textWithoutTrailingSpace = text?.replace(/\s*$/, "");
         if (textWithoutTrailingSpace === currentWord) {
-            setAllTypedWords(prev => prev + ' ' + textWithoutTrailingSpace); // Append typed word
+            setAllTypedWords(prev => prev + ' ' + textWithoutTrailingSpace);
             setText('');
             setWordIdx(() => wordIdx + 1);
         }
     }, [text, currentWord, wordIdx, quotesSplit]);
 
-    useEffect(() => {
-        setGameState(GameState.PLAYING);
-    }, []);
 
     useEffect(() => {
         if (gameState === GameState.PLAYING) {
             document.getElementById(inputId)?.focus();
-            setQuote(randomQuote());
             setStartTime(Date.now());
         }
         if (gameState === GameState.VIEW_STATS) {
-            setEndTime(Date.now());
+            setEndTime(Date.now());         
         }
     }, [gameState]);
 
     useEffect(() => {
-        const quoteFinished =
-            quotesSplit.length === wordIdx && quotesSplit.length !== 0;
-        if (quoteFinished) {
+        if (quotesSplit.length === wordIdx && quotesSplit.length !== 0) {
             setGameState(GameState.VIEW_STATS);
         }
     }, [wordIdx, quotesSplit]);
 
-    // Countdown effect
 
     useEffect(() => {
 
@@ -133,7 +150,7 @@ function TypingRace() {
 
         }
 
-        return () => clearTimeout(timer); // Cleanup
+        return () => clearTimeout(timer);
 
     }, [countdown, isCountdownActive]);
 
@@ -143,7 +160,7 @@ function TypingRace() {
 
         if (gameState === GameState.PLAYING) {
             timer = setInterval(() => {
-                setElapsedTime((prevTime) => (Date.now() - startTime) / 1000);
+                setElapsedTime((Date.now() - startTime) / 1000);
             }, 1000);
         }
 
@@ -162,15 +179,41 @@ function TypingRace() {
         const wps = wordsTyped / elapsedSeconds;
         return Math.floor(wps * 60);
     };
-   
 
-    const nextQuote = () => {
-        setQuote(undefined);  // Temporarily clear the quote while resetting
-        setCountdown(5); // Reset countdown
-        setIsCountdownActive(true); // Activate countdown
-        setGameState(GameState.WAITING); // Set game state to WAITING until countdown finishes
+    const handleSaveGameResult = async () => {
+        if (!currentUserId) return;
+
+        const gameResult = {
+            userId: currentUserId,
+            wordsPerMinute: calculateWPM(),
+            accuracy: 0, // Calculate accuracy as needed
+            datePlayed: new Date().toISOString(),
+            quoteId: quote?.quoteId || 0
+        };
+
+        await saveGameResult(gameResult);
+    };
+
+
+    const nextQuote = async () => {
+        setQuote(undefined);
+        setCountdown(5);
+        try {
+            const data = await randomQuote();
+            setQuote(data);
+        } catch (error) {
+            console.error("Error fetching new quote:", error);
+        }
+        setIsCountdownActive(true);
+        setGameState(GameState.WAITING);
         setElapsedTime(0);
     };
+
+    useEffect(() => {
+        if (gameState === GameState.VIEW_STATS) {
+            handleSaveGameResult();
+        }
+    }, [gameState]);
 
     return (
         <div className="typeracer-container">

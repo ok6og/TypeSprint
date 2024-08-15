@@ -1,12 +1,12 @@
 import Navbar from './Navbar.tsx';
-import { Outlet } from 'react-router-dom'; // To render child routes
+import { Outlet } from 'react-router-dom';
 
 function Layout() {
     return (
         <div>
             <Navbar />
             <main>
-                <Outlet /> {/* Renders the matched route's component */}
+                <Outlet />
             </main>
         </div>
     );

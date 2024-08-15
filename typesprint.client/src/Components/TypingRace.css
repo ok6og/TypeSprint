@@ -5,9 +5,9 @@ body {
 
 .typeracer-container {
     /*display: flex;*/
-    flex-direction: column; /* Stack elements vertically */
+    /*flex-direction: column;*/ /* Stack elements vertically */
     width: 100%;
-    margin: 0 auto;
+    margin-top:100px;
     padding: 20px;
     background-color: #f4f4f9; /* Light background for better contrast */
     border-radius: 8px; /* Rounded corners */

@@ -24,7 +24,7 @@ const StatsDisplay: FC<StatsDisplayProps> = ({
     return (
         <div className="stats-display">
             <h2>Stats</h2>
-            <p><strong>Quote:</strong> {quote.quote}    <strong>Author:</strong> {quote.movieName}</p>
+            <p><strong>Quote:</strong> {quote.quoteText}    <strong>Author:</strong> {quote.source?.sourceName}</p>
             
             <p><strong>Time:</strong> {typeDurationInSeconds.toFixed(2)} seconds</p>
             <p><strong>Words per Minute:</strong> {wpm}</p>

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TypeSprint.Server.Data;
 using TypeSprint.Server.Models;
+using TypeSprint.Server.Models.DTOs;
 
 namespace TypeSprint.Server.Controllers
 {
@@ -23,9 +24,20 @@ namespace TypeSprint.Server.Controllers
 
         // GET: api/SourceTypes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SourceType>>> GetSourceTypes()
+        public async Task<ActionResult<IEnumerable<SourceTypeDto>>> GetSourceTypes()
         {
-            return await _context.SourceTypes.ToListAsync();
+            var sourceTypes = await _context.SourceTypes
+            .Select(st => new SourceTypeDto
+            {
+                SourceTypeId = st.SourceTypeId,
+                TypeName = st.TypeName
+            })
+            .ToListAsync();
+
+            return Ok(sourceTypes);
+
+            //var nz =  await _context.SourceTypes.ToListAsync();
+            //return nz;
         }
 
         // GET: api/SourceTypes/5
@@ -76,8 +88,30 @@ namespace TypeSprint.Server.Controllers
         // POST: api/SourceTypes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<SourceType>> PostSourceType(SourceType sourceType)
+        public async Task<ActionResult<SourceType>> PostSourceType(SourceTypeCreateDto sourceTypeCreateDto)
         {
+            // Validate input
+            if (string.IsNullOrWhiteSpace(sourceTypeCreateDto.TypeName))
+            {
+                return BadRequest("Type Name is required.");
+            }
+
+            // Check if SourceType with the same TypeName already exists
+            var existingSourceType = await _context.SourceTypes
+                .Where(st => st.TypeName == sourceTypeCreateDto.TypeName)
+                .FirstOrDefaultAsync();
+
+            if (existingSourceType != null)
+            {
+                return Conflict("A source type with the same name already exists.");
+            }
+
+            // Create a new SourceType
+            var sourceType = new SourceType
+            {
+                TypeName = sourceTypeCreateDto.TypeName
+            };
+
             _context.SourceTypes.Add(sourceType);
             await _context.SaveChangesAsync();
 
