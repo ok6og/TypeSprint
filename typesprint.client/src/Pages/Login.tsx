@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import './Login.css';
 
 function Login() {
     // state variables for email and passwords
@@ -33,7 +34,7 @@ function Login() {
             setError("");
             // post data to the /register api
 
-            var loginurl = "";
+            let loginurl = "";
             if (rememberme == true)
                 loginurl = "/login?useCookies=true";
             else

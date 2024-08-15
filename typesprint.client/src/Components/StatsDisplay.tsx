@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import { Quote } from './repository'
+import './StatsDisplay.css'; // Import the CSS file for styling
 
 interface StatsDisplayProps {
     quote: Quote
@@ -21,19 +22,17 @@ const StatsDisplay: FC<StatsDisplayProps> = ({
     const wpm = Math.floor(wps * 60)
 
     return (
-        <div className="w-full border rounded-xl p-8">
-            <p className="text-xl font-bold font-sans">
-                You just typed a quote from {quote.movieName}
-            </p>
-            <p className="mt-2">Your stats:</p>
-            <ul>
-                <li>Words Per Minute: {wpm}</li>
-                <li>Words Per Second: {wps.toFixed(2)}</li>
-            </ul>
+        <div className="stats-display">
+            <h2>Stats</h2>
+            <p><strong>Quote:</strong> {quote.quote}    <strong>Author:</strong> {quote.movieName}</p>
+            
+            <p><strong>Time:</strong> {typeDurationInSeconds.toFixed(2)} seconds</p>
+            <p><strong>Words per Minute:</strong> {wpm}</p>
+            <p><strong>Words per Second:</strong> {wps.toFixed(2)}</p>
             <button
                 onClick={onClickNextQuote}
                 id="next_quote_button"
-                className="px-4 py-2 border rounded-xl bg-blue-500 text-white mt-4"
+                className="next-quote-button"
             >
                 Next Quote
             </button>

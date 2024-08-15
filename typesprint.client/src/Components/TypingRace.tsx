@@ -12,7 +12,7 @@ function TypingRace() {
     const [quote, setQuote] = useState<Quote>();
     const [text, setText] = useState<string>("");
 
-    const [allTypedWords, setAllTypedWords] = useState<string>(""); 
+    const [allTypedWords, setAllTypedWords] = useState<string>(""); // New state to track all typed words
 
     const [currentWord, setCurrentWord] = useState<string>();
     const quotesSplit = useMemo(() => quote?.quote.split(" ") ?? [], [quote]);
@@ -26,6 +26,8 @@ function TypingRace() {
     const [countdown, setCountdown] = useState<number>(5); // New state for countdown
 
     const [isCountdownActive, setIsCountdownActive] = useState<boolean>(false); // Track if countdown is active
+
+    const [elapsedTime, setElapsedTime] = useState<number>(0);
 
 
     const alreadyTypedWords = useMemo(
@@ -55,7 +57,7 @@ function TypingRace() {
 
     const wrongRedWord = useMemo(
         () =>
-            currentWord?.slice(correctGreenWord.length,text.length),
+            currentWord?.slice(correctGreenWord.length, text.length),
         [correctGreenWord, currentWord, text]
     );
 
@@ -135,12 +137,25 @@ function TypingRace() {
 
     }, [countdown, isCountdownActive]);
 
+    // Elapsed time effect
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+
+        if (gameState === GameState.PLAYING) {
+            timer = setInterval(() => {
+                setElapsedTime((prevTime) => (Date.now() - startTime) / 1000);
+            }, 1000);
+        }
+
+        return () => clearInterval(timer);
+    }, [gameState, startTime]);
+
     const calculateWPM = () => {
         if (startTime === 0) return 0;
 
         const elapsedSeconds = (Date.now() - startTime) / 1000;
 
-         if (elapsedSeconds <= 0 || allTypedWords.length === 0) return 0;
+        if (elapsedSeconds <= 0 || allTypedWords.length === 0) return 0;
 
         const wordsTyped = allTypedWords.trim().split(/\s+/).length;
 
@@ -154,11 +169,16 @@ function TypingRace() {
         setCountdown(5); // Reset countdown
         setIsCountdownActive(true); // Activate countdown
         setGameState(GameState.WAITING); // Set game state to WAITING until countdown finishes
+        setElapsedTime(0);
     };
 
     return (
         <div className="typeracer-container">
-            <h1 className="typeracer-heading">Typeracer</h1>
+            <div className="headingLol">
+                <div className="elapsed-time">Elapsed Time: {elapsedTime.toFixed(0)}s</div>
+                <h1 className="typeracer-heading">Typeracer</h1>
+            </div>
+            
             <p className="typeracer-text">
                 <span className="green-typed">{alreadyTypedWords} {correctGreenWord}</span>
                 <span className="red-text">{wrongRedWord}</span>
@@ -181,10 +201,10 @@ function TypingRace() {
                     onClickNextQuote={nextQuote}
                 />
             )}
-            {isCountdownActive && <p>Get ready! Starting in {countdown}...</p>}
+            {isCountdownActive && <p className="countdown-text">Get ready! Starting in {countdown}...</p>}
 
             {gameState === GameState.PLAYING && (
-                <p>Words per minute: {calculateWPM()}</p>
+                <p className="playing-text">Words per minute: {calculateWPM()}</p>
             )}
         </div>
     );

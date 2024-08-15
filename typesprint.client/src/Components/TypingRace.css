@@ -1,23 +1,45 @@
 body {
+    margin: 0;
+    font-family: Arial, sans-serif; /* Ensure a clean, modern font */
 }
+
 .typeracer-container {
-    padding-left: 20px;
-    padding-right: 20px;
+    /*display: flex;*/
+    flex-direction: column; /* Stack elements vertically */
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f4f4f9; /* Light background for better contrast */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    position: relative;
+}
+
+
+
+.elapsed-time {
+    /*display: flex;*/
+    font-family: monospace;
+    font-size: 1.25rem;
+    color: #333;
+    padding-top:15px;
+    margin: 0;
 }
 
 .typeracer-heading {
-    margin-bottom: 16px;
     font-family: monospace;
-    text-align: left;
+    font-size: 3rem;
+    color: #333;
+    margin: 0; /* Remove default margin */
 }
 
 .typeracer-text {
     font-family: monospace;
     text-align: left;
-}
-
-.typeracer-highlight {
-    color: black;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    white-space: pre-wrap; /* Preserve spaces and line breaks */
 }
 
 .typeracer-input {
@@ -30,22 +52,38 @@ body {
     box-sizing: border-box; /* Ensures padding doesn't affect the width */
 }
 
-
-/* Green text for already typed words */
 .green-typed {
-    color: #16a34a;
+    color: green;
 }
 
-/* Black text with underline for the current word */
 .current-word {
     color: black;
     text-decoration: underline;
 }
 
-/* Black text for words yet to be typed */
 .to-be-typed {
-    color: black;
+    color: grey;
 }
-.red-text{
-    color:red;
+
+.red-text {
+    color: red;
+}
+
+.typeracer-input:focus {
+    border-color: #007bff; /* Highlight input field on focus */
+}
+
+.countdown-text {
+    font-size: 1.5rem;
+    color: #ff6f61; /* Orange color for countdown */
+}
+
+.playing-text {
+    font-size: 1.2rem;
+    color: #333;
+}
+.headingLol {
+    display: flex;
+    flex-direction:row-reverse;
+    justify-content:space-between;
 }
