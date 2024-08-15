@@ -40,8 +40,15 @@ function AddSourceTypeComponent() {
 
             // Optionally, handle the response or reset the form
             setTypeName('');
-        } catch (error) {
-            setError(error.message || 'An error occurred while adding the source type.');
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.error(error.message);
+                setError(error.message || 'An error occurred while adding the source type.');
+            }
+            else {
+                console.error('An unknown error occurred');
+                setError('An unknown error occurred.');
+            }
         } finally {
             setIsSubmitting(false);
         }
