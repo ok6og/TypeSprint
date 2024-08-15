@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-/*import { Line } from 'react-chartjs-2';*/
-import 'chart.js/auto'; // Required for Chart.js to work
-import { fetchUserGameResults, GameResultDto } from './apiService';
+import { Line } from 'react-chartjs-2';
+import 'chart.js/auto';
+import { fetchUserGameResults, GameResultDto } from '../Services/apiService';
 import './UserProgress.css';
 
 export function UserProgress() {
@@ -13,7 +13,6 @@ export function UserProgress() {
         const fetchData = async () => {
             try {
                 const results = await fetchUserGameResults();
-                // Sort results by date
                 results.sort((a, b) => new Date(a.datePlayed).getTime() - new Date(b.datePlayed).getTime());
                 setGameResults(results);
             } catch (err) {
@@ -30,7 +29,6 @@ export function UserProgress() {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
 
-    // Prepare data for the chart
     const chartData = {
         labels: gameResults.map(result => new Date(result.datePlayed).toLocaleDateString()),
         datasets: [
@@ -44,7 +42,6 @@ export function UserProgress() {
         ],
     };
 
-    // Configure the chart options
     const chartOptions = {
         scales: {
             y: {
@@ -70,3 +67,5 @@ export function UserProgress() {
         </div>
     );
 }
+
+export default UserProgress;

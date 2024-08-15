@@ -173,5 +173,53 @@ namespace TypeSprint.Server.Controllers
                 return StatusCode(500, "Failed to fetch user game results");
             }
         }
+
+        [HttpGet("userStats")]
+        public async Task<ActionResult<UserStatsDto>> GetUserStats()
+        {
+            try
+            {
+                var userIdString = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                var results = await _context.GameResults
+                    .Where(gr => gr.UserId == userIdString)
+                    .OrderByDescending(gr => gr.DatePlayed)
+                    .ToListAsync();
+
+                if (results.Count == 0)
+                {
+                    return Ok(new UserStatsDto
+                    {
+                        AverageWpm = 0,
+                        TotalRaces = 0,
+                        BestWpm = 0,
+                        LastRaceWpm = 0,
+                        LastTenRacesAverageWpm = 0
+                    });
+                }
+
+                var averageWpm = results.Average(gr => gr.WordsPerMinute);
+                var bestWpm = results.Max(gr => gr.WordsPerMinute);
+                var lastRaceWpm = results.FirstOrDefault()?.WordsPerMinute ?? 0;
+                var lastTenRaces = results.Take(10).ToList();
+                var lastTenRacesAverageWpm = lastTenRaces.Any() ? lastTenRaces.Average(gr => gr.WordsPerMinute) : 0;
+
+                var userStats = new UserStatsDto
+                {
+                    AverageWpm = averageWpm,
+                    TotalRaces = results.Count,
+                    BestWpm = bestWpm,
+                    LastRaceWpm = lastRaceWpm,
+                    LastTenRacesAverageWpm = lastTenRacesAverageWpm
+                };
+
+                return Ok(userStats);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error fetching user stats: " + ex.Message);
+                return StatusCode(500, "Failed to fetch user stats");
+            }
+        }
     }
 }

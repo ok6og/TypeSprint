@@ -1,4 +1,4 @@
-import AddQuoteComponent from '../Components/AddQuoteComponent'
+import AddQuoteComponent from '../Components/QuotesSources/AddQuoteComponent'
 function QuoteManagementPage() {
     return (
         <div className="quote-management-page">

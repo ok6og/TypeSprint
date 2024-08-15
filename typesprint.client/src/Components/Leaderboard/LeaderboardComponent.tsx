@@ -1,7 +1,5 @@
-// src/components/Leaderboard.tsx
-
 import { useEffect, useState } from 'react';
-import { fetchLeaderboard, GameResultDto } from './apiService'; // Adjust the path as needed
+import { fetchLeaderboard, GameResultDto } from '../Services/apiService';
 import './Leaderboard.css';
 
 function Leaderboard() {

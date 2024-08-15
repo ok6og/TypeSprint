@@ -48,7 +48,7 @@ function AddSourceTypeComponent() {
     };
 
     return (
-        <div>
+        <div className="form-container">
             <h1>Add Source Type</h1>
             <form onSubmit={handleSubmit}>
                 <div className="labels">

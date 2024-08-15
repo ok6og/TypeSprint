@@ -1,9 +1,17 @@
 ﻿#root {
-    width: 80%;
-    max-width: 1280px;
+    width: 100%; 
+    max-width: 100%; 
     margin: 0 auto;
-    padding: 2rem;
+    padding: 0; 
     text-align: center;
+}
+
+body {
+    margin: 0; 
+}
+
+main {
+    padding: 2rem;  Keep padding for the main content 
 }
 
 th, td {

@@ -1,0 +1,31 @@
+/* src/Components/Footer.css */
+
+.footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    width: 100%; /* Ensures full width */
+    bottom: 0; /* Ensures it's at the bottom of its container */
+    margin-top: 20px; /* Provides space between content above and footer */
+}
+
+.footer-content {
+    max-width: 1200px; /* Optional: restricts content width */
+    margin: 0 auto; /* Centers the content */
+}
+
+.footer-links {
+    margin-top: 10px;
+}
+
+.footer-links a {
+    color: #fff;
+    margin: 0 15px;
+    text-decoration: none;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}

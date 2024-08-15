@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    font-family: Arial, sans-serif; /* Ensure a clean, modern font */
+    font-family: Arial, sans-serif;
 }
 
 .typeracer-container {
@@ -9,9 +9,9 @@ body {
     width: 100%;
     margin-top:100px;
     padding: 20px;
-    background-color: #f4f4f9; /* Light background for better contrast */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    background-color: #f4f4f9;
+    border-radius: 8px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     position: relative;
 }
 
@@ -30,7 +30,7 @@ body {
     font-family: monospace;
     font-size: 3rem;
     color: #333;
-    margin: 0; /* Remove default margin */
+    margin: 0;
 }
 
 .typeracer-text {
@@ -39,7 +39,7 @@ body {
     font-size: 1.25rem;
     line-height: 1.5;
     margin-bottom: 20px;
-    white-space: pre-wrap; /* Preserve spaces and line breaks */
+    white-space: pre-wrap;
 }
 
 .typeracer-input {
@@ -49,7 +49,7 @@ body {
     padding-right: 16px;
     padding-top: 8px;
     padding-bottom: 8px;
-    box-sizing: border-box; /* Ensures padding doesn't affect the width */
+    box-sizing: border-box;
 }
 
 .green-typed {
@@ -70,12 +70,12 @@ body {
 }
 
 .typeracer-input:focus {
-    border-color: #007bff; /* Highlight input field on focus */
+    border-color: #007bff;
 }
 
 .countdown-text {
     font-size: 1.5rem;
-    color: #ff6f61; /* Orange color for countdown */
+    color: #ff6f61;
 }
 
 .playing-text {

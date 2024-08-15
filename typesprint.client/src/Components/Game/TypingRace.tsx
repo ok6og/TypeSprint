@@ -1,35 +1,26 @@
 // TypingRace.tsx
 import './TypingRace.css';
 import { useEffect, useMemo, useState } from "react";
-import { Quote, randomQuote } from "./repository";
-import StatsDisplay from "./StatsDisplay";
+import { Quote, randomQuote } from "../Services/repository";
+import StatsDisplay from "../Stats/StatsDisplay";
 import { GameState } from "./gameState";
-import { fetchCurrentUserId, saveGameResult } from './apiService'; // Import your API functions
+import { fetchCurrentUserId, saveGameResult } from '../Services/apiService';
 
 const inputId = "typeracer-input";
-
 
 function TypingRace() {
     const [quote, setQuote] = useState<Quote>();
     const [text, setText] = useState<string>("");
-
     const [allTypedWords, setAllTypedWords] = useState<string>("");
-
     const [currentWord, setCurrentWord] = useState<string>();
     const quotesSplit = useMemo(() => quote?.quoteText.split(" ") ?? [], [quote]);
     const [wordIdx, setWordIdx] = useState<number>(0);
-
     const [startTime, setStartTime] = useState<number>(0);
     const [endTime, setEndTime] = useState<number>(0);
-
     const [gameState, setGameState] = useState(GameState.WAITING);
-
     const [countdown, setCountdown] = useState<number>(5);
-
     const [isCountdownActive, setIsCountdownActive] = useState<boolean>(true);
-
     const [elapsedTime, setElapsedTime] = useState<number>(0);
-
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
     useEffect(() => {
@@ -41,23 +32,14 @@ function TypingRace() {
         fetchRandomQuote();
     }, []);
 
-    // Fetch a random quote from the server
     const fetchRandomQuote = async () => {
         try {
-            const data = await randomQuote();  // fetch random quote from backend
-            setQuote(data);  // Set the fetched quote
+            const data = await randomQuote();
+            setQuote(data);
         } catch (error) {
             console.error("Error fetching quote:", error);
         }
     };
-
-    //useEffect(() => {
-    //    // Trigger countdown on first page load
-    //    setIsCountdownActive(true);
-    //    fetchRandomQuote();
-    //}, []);  // This effect runs once when the component mounts
-
-
 
     const alreadyTypedWords = useMemo(
         () => quotesSplit.slice(0, wordIdx).join(" "),
@@ -77,23 +59,20 @@ function TypingRace() {
                 }
                 i++;
             }
-            return text.slice(0, i); // return only the correct part
+            return text.slice(0, i);
         }
         return "";
     }, [currentWord, text]);
-
     
-
     const wrongRedWord = useMemo(
         () => currentWord?.slice(correctGreenWord.length, text.length),
         [correctGreenWord, currentWord, text]
     );
 
-
     useEffect(() => {
         setWordIdx(0);
         setText('');
-        setAllTypedWords(''); // Reset allTypedWords
+        setAllTypedWords('');
     }, [quotesSplit]);
 
     useEffect(() => {
@@ -111,7 +90,6 @@ function TypingRace() {
         }
     }, [text, currentWord, wordIdx, quotesSplit]);
 
-
     useEffect(() => {
         if (gameState === GameState.PLAYING) {
             document.getElementById(inputId)?.focus();
@@ -128,28 +106,19 @@ function TypingRace() {
         }
     }, [wordIdx, quotesSplit]);
 
-
     useEffect(() => {
 
         let timer: NodeJS.Timeout;
-
         if (isCountdownActive) {
-
             if (countdown > 0) {
-
                 timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-
             } else {
-
                 setGameState(GameState.PLAYING);
-                setText(''); // Clear text for the new quote
-
-                setIsCountdownActive(false); // Stop countdown
-                document.getElementById(inputId)?.focus(); // Focus input after countdown
+                setText('');
+                setIsCountdownActive(false);
+                document.getElementById(inputId)?.focus();
             }
-
         }
-
         return () => clearTimeout(timer);
 
     }, [countdown, isCountdownActive]);
@@ -186,12 +155,24 @@ function TypingRace() {
         const gameResult = {
             userId: currentUserId,
             wordsPerMinute: calculateWPM(),
-            accuracy: 0, // Calculate accuracy as needed
+            accuracy: calculateAccuracy(),
             datePlayed: new Date().toISOString(),
             quoteId: quote?.quoteId || 0
         };
 
         await saveGameResult(gameResult);
+    };
+
+    const calculateAccuracy = () => {
+        if (allTypedWords.trim() === '') return 0;
+
+        const typedWords = allTypedWords.trim().split(/\s+/);
+        const correctWords = quotesSplit.slice(0, wordIdx + 1); // Words that should have been typed
+
+        const correctCount = typedWords.filter(word => correctWords.includes(word)).length;
+        const totalWords = correctWords.length;
+
+        return totalWords === 0 ? 100 : Math.floor((correctCount / totalWords) * 100);
     };
 
 
@@ -219,7 +200,7 @@ function TypingRace() {
         <div className="typeracer-container">
             <div className="headingLol">
                 <div className="elapsed-time">Elapsed Time: {elapsedTime.toFixed(0)}s</div>
-                <h1 className="typeracer-heading">Typeracer</h1>
+                <h1 className="typeracer-heading">TypeSprint</h1>
             </div>
             
             <p className="typeracer-text">
@@ -239,6 +220,7 @@ function TypingRace() {
                 <StatsDisplay
                     startTime={startTime}
                     endTime={endTime}
+                    accuracy={calculateAccuracy()}
                     quote={quote}
                     numOfWords={quotesSplit.length}
                     onClickNextQuote={nextQuote}

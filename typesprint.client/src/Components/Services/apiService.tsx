@@ -2,6 +2,13 @@
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+export interface UserStatsDto {
+    averageWpm: number;
+    totalRaces: number;
+    bestWpm: number;
+    lastRaceWpm: number;
+    lastTenRacesAverageWpm: number;
+}
 interface GameResult {
     userId: string;
     wordsPerMinute: number;
@@ -36,7 +43,7 @@ export const fetchUserGameResults = async (): Promise<GameResultDto[]> => {
     try {
         const response = await fetch(`${API_BASE_URL}/gameResults/games`, {
             method: 'GET',
-            credentials: 'include' // Ensure cookies or tokens are sent
+            credentials: 'include'
         });
 
         if (response.ok) {
@@ -92,7 +99,7 @@ export const fetchCurrentUserId = async () => {
     try {
         const response = await fetch(`${API_BASE_URL}/user/currentId`,{
             method: 'GET',
-            credentials: 'include' // Ensure cookies or tokens are sent
+            credentials: 'include'
         });
         if (response.ok) {
             const data = await response.json();
@@ -104,5 +111,35 @@ export const fetchCurrentUserId = async () => {
     } catch (error) {
         console.error("Error fetching user ID:", error);
         return null;
+    }
+};
+
+export const fetchUserStats = async (): Promise<UserStatsDto> => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/gameResults/userStats`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+        if (response.ok) {
+            return response.json();
+        } else {
+            console.error("Failed to fetch user stats:", response.statusText);
+            return {
+                averageWpm: 0,
+                totalRaces: 0,
+                bestWpm: 0,
+                lastRaceWpm: 0,
+                lastTenRacesAverageWpm: 0
+            };
+        }
+    } catch (error) {
+        console.error("Error fetching user stats:", error);
+        return {
+            averageWpm: 0,
+            totalRaces: 0,
+            bestWpm: 0,
+            lastRaceWpm: 0,
+            lastTenRacesAverageWpm: 0
+        };
     }
 };
