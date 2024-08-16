@@ -153,11 +153,14 @@ function TypingRace() {
     const handleSaveGameResult = async () => {
         if (!currentUserId) return;
 
+        const localDate = new Date();
+        localDate.setHours(localDate.getHours() + 3);
+
         const gameResult = {
             userId: currentUserId,
             wordsPerMinute: calculateWPM(),
             accuracy: calculateAccuracy(),
-            datePlayed: new Date().toISOString(),
+            datePlayed: localDate.toISOString(),
             quoteId: quote?.quoteId || 0
         };
 

@@ -29,7 +29,7 @@ function StatsDisplay({
             <p><strong>Time:</strong> {typeDurationInSeconds.toFixed(2)} seconds</p>
             <p><strong>Words per Minute:</strong> {wpm}</p>
             <p><strong>Words per Second:</strong> {wps.toFixed(2)}</p>
-            <p><strong>Accuracy:</strong> {accuracy}%</p>
+            <p><strong>Accuracy:</strong> {accuracy.toFixed(2)}%</p>
             <button
                 onClick={onClickNextQuote}
                 id="next_quote_button"
