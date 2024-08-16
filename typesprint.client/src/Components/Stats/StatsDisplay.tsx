@@ -24,12 +24,16 @@ function StatsDisplay({
 
     return (
         <div className="stats-display">
+            <div className="stats">
+            
             <h2>Stats</h2>
-            <p><strong>Quote:</strong> {quote.quoteText} <strong>Author:</strong> {quote.source?.sourceName}</p>
+            <p><strong>Quote:</strong> {quote.quoteText} </p>
+            <p><strong>Author:</strong> {quote.source?.sourceName}</p>
             <p><strong>Time:</strong> {typeDurationInSeconds.toFixed(2)} seconds</p>
             <p><strong>Words per Minute:</strong> {wpm}</p>
             <p><strong>Words per Second:</strong> {wps.toFixed(2)}</p>
             <p><strong>Accuracy:</strong> {accuracy.toFixed(2)}%</p>
+            </div>
             <button
                 onClick={onClickNextQuote}
                 id="next_quote_button"
@@ -38,6 +42,9 @@ function StatsDisplay({
                 Next Quote
             </button>
         </div>
+
+       
+
     );
 }
 

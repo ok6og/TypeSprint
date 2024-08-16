@@ -1,19 +1,17 @@
-/* src/Components/Footer.css */
-
 .footer {
     background-color: #333;
     color: #fff;
     padding: 20px;
     text-align: center;
     position: relative;
-    width: 100%; /* Ensures full width */
-    bottom: 0; /* Ensures it's at the bottom of its container */
-    margin-top: 20px; /* Provides space between content above and footer */
+    width: 100%;
+    bottom: 0;
+    margin-top: 20px; 
 }
 
 .footer-content {
-    max-width: 1200px; /* Optional: restricts content width */
-    margin: 0 auto; /* Centers the content */
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .footer-links {
@@ -28,4 +26,18 @@
 
 .footer-links a:hover {
     text-decoration: underline;
+}
+
+.footer-social-icons {
+    margin-top: 15px;
+}
+
+.footer-social-icons a {
+    color: #fff;
+    margin: 0 10px;
+    font-size: 24px;
+}
+
+.footer-social-icons a:hover {
+    color: #1da1f2;
 }
